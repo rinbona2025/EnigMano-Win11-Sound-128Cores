@@ -4,8 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       INSTANCE:
-        description: "Instance name"
+        description: "Instance number to deploy (e.g., 1, 2, 3...)"
         required: true
+        default: "1"
 
 jobs:
   deploy-enigmano:
@@ -16,23 +17,23 @@ jobs:
       - name: 📥 Checkout Repository
         uses: actions/checkout@v3
 
-      - name: 🐍 Install Python 3 & pip
+      - name: 🐍 Install Python3 & System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3 python3-pip curl
+          sudo apt-get install -y python3 python3-pip curl build-essential
 
-      - name: ⚡ Install Dependencies
+      - name: ⚡ Install Python Packages
         run: |
           pip3 install --upgrade pip
-          pip3 install gputil
+          pip3 install gputil psutil
 
-      - name: 🌐 Set Ngrok Auth Token
+      - name: 🌐 Set NGROK_AUTH_TOKEN
         run: |
           echo "Setting NGROK_AUTH_TOKEN from GitHub secrets"
           export NGROK_AUTH_TOKEN="${{ secrets.NGROK_AUTH_TOKEN }}"
           echo "✅ NGROK_AUTH_TOKEN set successfully"
 
-      - name: ⚔️ Run EnigMano Setup Script
+      - name: ⚔️ Run EnigMano Colab Instance Script
         env:
           NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
         run: |
