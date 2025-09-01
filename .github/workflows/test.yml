@@ -19,30 +19,27 @@ jobs:
 
       - name: 🐍 Install Python3 & System Dependencies
         run: |
-          sudo apt-get update -y
-          sudo apt-get install -y python3 python3-pip curl build-essential
+          sudo apt-get update -q -y
+          sudo apt-get install -q -y python3 python3-pip curl build-essential \
+            xfce4 desktop-base xfce4-terminal xscreensaver xrdp \
+            qbittorrent wget unzip sudo ufw
 
-      - name: ⚡ Install Python Packages
+      - name: ⚡ Install Python Packages (Safe pip upgrade)
         run: |
-          sudo pip3 install --upgrade pip
-          sudo pip3 install gputil psutil 
-
-      - name: 🌐 Set NGROK_AUTH_TOKEN
-        run: |
-          echo "Setting NGROK_AUTH_TOKEN from GitHub secrets"
-          export NGROK_AUTH_TOKEN="${{ secrets.NGROK_AUTH_TOKEN }}"
-          echo "✅ NGROK_AUTH_TOKEN set successfully"
+          # Use --break-system-packages to safely upgrade pip on Debian/Ubuntu
+          sudo python3 -m pip install --upgrade pip --break-system-packages -q
+          sudo python3 -m pip install gputil psutil -q
 
       - name: ⚔️ Run EnigMano Colab Instance Script
         env:
           NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
         run: |
           echo "🚦 Downloading and running EnigMano Colab Instance script..."
-          curl -sL https://gitlab.com/Shahzaib-YT/test/-/raw/main/EnigMano_Colab_Debian.py | sudo python3 -
+          sudo bash -c 'curl -sL https://gitlab.com/Shahzaib-YT/test/-/raw/main/EnigMano_Colab_Debian.py | python3 -'
 
       - name: 💠 Final Status
         if: always()
         run: |
-          echo "✅ EnigMano Instance ${{ github.event.inputs.INSTANCE }} completed execution."
-          echo "🔋 Powered by: SHAHZAIB-YT"
-          echo "🏁 EnigMano deployment executed with tactical precision."
+          sudo echo "✅ EnigMano Instance ${{ github.event.inputs.INSTANCE }} completed execution."
+          sudo echo "🔋 Powered by: SHAHZAIB-YT"
+          sudo echo "🏁 EnigMano deployment executed with tactical precision."
