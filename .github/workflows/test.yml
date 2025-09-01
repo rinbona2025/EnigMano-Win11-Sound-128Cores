@@ -20,12 +20,12 @@ jobs:
       - name: 🐍 Install Python3 & System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3 python3-pip curl build-essential
+          sudo apt-get install -q -y python3 python3-pip curl build-essential
 
       - name: ⚡ Install Python Packages
         run: |
-          pip3 install --upgrade pip
-          pip3 install gputil psutil
+          pip3 install -q --upgrade pip
+          pip3 install -q gputil psutil 
 
       - name: 🌐 Set NGROK_AUTH_TOKEN
         run: |
