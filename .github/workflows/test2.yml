@@ -30,12 +30,6 @@ jobs:
           sudo python3 -m pip install --upgrade pip --break-system-packages -q
           sudo python3 -m pip install gputil psutil -q
 
-      - name: 🌐 Set NGROK_AUTH_TOKEN
-        run: |
-          echo "Setting NGROK_AUTH_TOKEN from GitHub secrets"
-          export NGROK_AUTH_TOKEN="${{ secrets.NGROK_AUTH_TOKEN }}"
-          echo "✅ NGROK_AUTH_TOKEN set successfully"
-
       - name: ⚔️ Run EnigMano Colab Instance Script
         env:
           NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
