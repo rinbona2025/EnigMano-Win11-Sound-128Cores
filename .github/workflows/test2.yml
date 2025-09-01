@@ -19,17 +19,19 @@ jobs:
 
       - name: 🐍 Install Python3 & System Dependencies
         run: |
-          sudo apt-get update
+          echo "📦 Installing Python3 & system dependencies..."
+          sudo apt-get update -q -y
           sudo apt-get install -q -y python3 python3-pip curl build-essential
 
       - name: ⚡ Install Python Packages
         run: |
+          echo "📦 Installing Python packages (gputil, psutil)..."
           pip3 install -q --upgrade pip
           pip3 install -q gputil psutil 
 
       - name: 📦 Install EnigMano System Packages
         run: |
-          echo "🚦 Updating package lists and upgrading..."
+          echo "🚦 Updating and upgrading system..."
           sudo apt-get update -q -y || true
           sudo apt-get upgrade -q -y || true
           
@@ -39,19 +41,19 @@ jobs:
             unzip wget sudo ufw
           )
           
-          echo "📦 Installing packages individually..."
+          echo "📦 Installing EnigMano system packages..."
           for pkg in "${PACKAGES[@]}"; do
             echo "➡️ Installing $pkg..."
             sudo apt-get install -q -y "$pkg" || echo "⚠️ Failed to install $pkg, continuing..."
           done
           
-          echo "✅ System package installation complete."
+          echo "✅ All system package installs attempted."
 
       - name: 🌐 Set NGROK_AUTH_TOKEN
         run: |
-          echo "Setting NGROK_AUTH_TOKEN from GitHub secrets"
+          echo "🔑 Setting NGROK_AUTH_TOKEN from GitHub secrets..."
           export NGROK_AUTH_TOKEN="${{ secrets.NGROK_AUTH_TOKEN }}"
-          echo "✅ NGROK_AUTH_TOKEN set successfully"
+          echo "✅ NGROK_AUTH_TOKEN set successfully."
 
       - name: ⚔️ Run EnigMano Colab Instance Script
         env:
