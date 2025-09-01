@@ -1,0 +1,50 @@
+name: "⚡ EnigMano Debian Deployment"
+
+on:
+  workflow_dispatch:
+    inputs:
+      INSTANCE:
+        description: "Instance number to deploy (e.g., 1, 2, 3...)"
+        required: true
+        default: "1"
+
+jobs:
+  deploy-enigmano:
+    name: "🚀 Deploy EnigMano Instance ${{ github.event.inputs.INSTANCE }}"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: 🐍 Install Python3 & System Dependencies
+        run: |
+          sudo apt-get update -q -y
+          sudo apt-get install -q -y python3 python3-pip curl build-essential \
+            xfce4 desktop-base xfce4-terminal xscreensaver xrdp \
+            telegram-desktop qbittorrent wget unzip sudo ufw
+
+      - name: ⚡ Install Python Packages
+        run: |
+          sudo pip3 install --upgrade pip -q
+          sudo pip3 install gputil psutil -q
+
+      - name: 🌐 Set NGROK_AUTH_TOKEN
+        run: |
+          echo "Setting NGROK_AUTH_TOKEN from GitHub secrets"
+          export NGROK_AUTH_TOKEN="${{ secrets.NGROK_AUTH_TOKEN }}"
+          echo "✅ NGROK_AUTH_TOKEN set successfully"
+
+      - name: ⚔️ Run EnigMano Colab Instance Script
+        env:
+          NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+        run: |
+          echo "🚦 Downloading and running EnigMano Colab Instance script..."
+          curl -sL https://gitlab.com/Shahzaib-YT/test/-/raw/main/EnigMano_Colab_Debian.py | sudo python3 -
+
+      - name: 💠 Final Status
+        if: always()
+        run: |
+          echo "✅ EnigMano Instance ${{ github.event.inputs.INSTANCE }} completed execution."
+          echo "🔋 Powered by: SHAHZAIB-YT"
+          echo "🏁 EnigMano deployment executed with tactical precision."
