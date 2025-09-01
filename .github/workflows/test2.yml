@@ -24,10 +24,11 @@ jobs:
             xfce4 desktop-base xfce4-terminal xscreensaver xrdp \
             qbittorrent wget unzip sudo ufw
 
-      - name: ⚡ Install Python Packages
+      - name: ⚡ Install Python Packages (Safe pip upgrade)
         run: |
-          sudo pip3 install --upgrade pip -q
-          sudo pip3 install gputil psutil -q
+          # Use --break-system-packages to safely upgrade pip on Debian/Ubuntu
+          sudo python3 -m pip install --upgrade pip --break-system-packages -q
+          sudo python3 -m pip install gputil psutil -q
 
       - name: 🌐 Set NGROK_AUTH_TOKEN
         run: |
