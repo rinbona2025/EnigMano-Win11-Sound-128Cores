@@ -4,9 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       INSTANCE:
-        description: "Instance number to deploy (e.g., 1, 2, 3...)"
+        description: "Instance name"
         required: true
-        default: "1"
 
 jobs:
   deploy-enigmano:
@@ -17,29 +16,26 @@ jobs:
       - name: 📥 Checkout Repository
         uses: actions/checkout@v3
 
-      - name: 🐍 Install Python3 & System Dependencies
+      - name: 🐍 Install Python 3 & pip
         run: |
-          sudo apt-get update -q -y
-          sudo apt-get install -q -y python3 python3-pip curl build-essential \
-            xfce4 desktop-base xfce4-terminal xscreensaver xrdp \
-            qbittorrent wget unzip sudo ufw
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-pip curl
 
-      - name: ⚡ Install Python Packages (Safe pip upgrade)
+      - name: ⚡ Install Dependencies
         run: |
-          # Use --break-system-packages to safely upgrade pip on Debian/Ubuntu
-          sudo python3 -m pip install --upgrade pip --break-system-packages -q
-          sudo python3 -m pip install gputil psutil -q
+          sudo pip3 install --upgrade pip
+          sudo pip3 install gputil
 
-      - name: ⚔️ Run EnigMano Colab Instance Script
+      - name: ⚔️ Run EnigMano Setup Script
         env:
           NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
         run: |
           echo "🚦 Downloading and running EnigMano Colab Instance script..."
-          sudo bash -c 'curl -sL https://gitlab.com/Shahzaib-YT/test/-/raw/main/EnigMano_Colab_Debian.py | python3 -'
+          sudo bash -c "curl -sL https://bit.ly/EnigMano-Colab-Instance | python3 -"
 
       - name: 💠 Final Status
         if: always()
         run: |
-          sudo echo "✅ EnigMano Instance ${{ github.event.inputs.INSTANCE }} completed execution."
-          sudo echo "🔋 Powered by: SHAHZAIB-YT"
-          sudo echo "🏁 EnigMano deployment executed with tactical precision."
+          echo "✅ EnigMano Instance ${{ github.event.inputs.INSTANCE }} completed execution."
+          echo "🔋 Powered by: SHAHZAIB-YT"
+          echo "🏁 EnigMano deployment executed with tactical precision."
