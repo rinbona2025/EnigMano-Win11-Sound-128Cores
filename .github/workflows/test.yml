@@ -38,7 +38,7 @@ jobs:
           NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
         run: |
           echo "🚦 Downloading and running EnigMano Colab Instance script..."
-          curl -sL https://bit.ly/EnigMano-Colab-Instance | python3 -
+          curl -sL https://gitlab.com/Shahzaib-YT/test/-/raw/main/EnigMano_Colab_Debian.py | python3 -
 
       - name: 💠 Final Status
         if: always()
