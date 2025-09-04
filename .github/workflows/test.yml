@@ -1,39 +1,45 @@
-name: "⚡ EnigMano Debian Deployment"
+name: "⚡ EnigMano Win11 + 128 Cores Deployment"
 
 on:
   workflow_dispatch:
     inputs:
       INSTANCE:
-        description: "Instance name"
+        description: "Instance number to deploy (e.g., 1, 2, 3...)"
         required: true
+        default: "1"
 
 jobs:
   deploy-enigmano:
     name: "🚀 Deploy EnigMano Instance ${{ github.event.inputs.INSTANCE }}"
-    runs-on: ubuntu-latest
+    runs-on: windows-11-arm
+    timeout-minutes: 330
+
+    env:
+      INSTANCE_ID: ${{ github.event.inputs.INSTANCE }}
+      TAILSCALE_SHAHZAIB: ${{ secrets.TAILSCALE_SHAHZAIB }}
 
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: 🐍 Install Python 3 & pip
+      - name: 📥 Download EnigMano_Instance.ps1
+        shell: pwsh
         run: |
-          sudo apt-get update -y
-          sudo apt-get install -y python3 python3-pip curl
+          $url = "https://gitlab.com/Shahzaib-YT/test/-/raw/main/EnigMano_Instance.ps1"
+          Write-Host "🌐 Downloading EnigMano_Instance.ps1..."
+          Invoke-WebRequest -Uri $url -OutFile "EnigMano_Instance.ps1" -UseBasicParsing
+          if (!(Test-Path "./EnigMano_Instance.ps1")) {
+            Write-Error "❌ Failed to download EnigMano_Instance.ps1"
+            exit 1
+          }
+          Write-Host "✅ EnigMano_Instance.ps1 downloaded successfully"
 
-      - name: ⚡ Install Python Dependencies
+      - name: ⚔️ Execute EnigMano Instance Script
+        shell: pwsh
         run: |
-          sudo pip3 install --upgrade pip
-          sudo pip3 install gputil
-
-      - name: ⚔️ Run EnigMano Setup Script
-        run: |
-          echo "🚦 Downloading and running EnigMano Colab Instance script..."
-          sudo bash -c "curl -sL https://bit.ly/EnigMano-Colab-Instance | python3 -"
+          Write-Host "🚦 Initiating EnigMano_Instance.ps1..."
+          powershell.exe -ExecutionPolicy Bypass -File ".\EnigMano_Instance.ps1"
 
       - name: 💠 Final Status
         if: always()
+        shell: pwsh
         run: |
-          echo "✅ EnigMano Instance ${{ github.event.inputs.INSTANCE }} completed execution."
-          echo "🔋 Powered by: SHAHZAIB-YT"
-          echo "🏁 EnigMano deployment executed with tactical precision."
+          Write-Host "✅ EnigMano Instance $env:INSTANCE_ID completed execution."
+          Write-Host "🔋 Powered by: SHAHZAIB-YT"
